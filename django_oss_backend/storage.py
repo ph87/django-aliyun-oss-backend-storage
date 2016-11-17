@@ -4,6 +4,7 @@ import mimetypes
 import posixpath
 
 from io import BytesIO
+from StringIO import StringIO
 
 from django.conf import settings
 from django.core.files.base import File
@@ -90,7 +91,7 @@ class OSSStorage(Storage):
         res = self.connection.get_object(self.bucket, name, self.headers)
         if res.status >= 300:
             raise OSSStorageException('OSSStorageError: %s' % res.read())
-        return res.read()
+        return File(StringIO(res.read()), name=name)
 
     def _save(self, name, content_file):
         name = self._clean_name(name)
